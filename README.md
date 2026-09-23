@@ -18,6 +18,10 @@ AI Usage 是一款轻量的 Tauri 桌面应用。它从本机已登录的 Codex 
 
 *示例额度用于展示样式；为方便查看，状态栏区域按比例放大。*
 
+![菜单栏点击后展开的模板选择面板](docs/settings-panel.png)
+
+*下拉面板为当前 Vue 界面截图，使用示例额度；选中模板以绿色边框标识。*
+
 ## 额度读取与计算
 
 应用调用本机 Codex app-server 的 `account/rateLimits/read` 接口读取套餐额度。解析时优先采用账号响应中的 `rateLimits`；仅当它缺失或为 `null` 时，才回退到 `rateLimitsByLimitId.codex`。不会把 Credits 或其他额度分桶合并进套餐主额度。
@@ -68,3 +72,7 @@ GitHub Actions 会在 `master` 分支推送、Pull Request 和手动触发时构
 ## 致谢
 
 感谢 [Metrik](https://github.com/keros68/metrik) 项目对额度状态呈现方式的启发。本项目根据自身的数据来源和菜单栏交互独立实现。
+
+## 许可证
+
+[MIT License](LICENSE)
