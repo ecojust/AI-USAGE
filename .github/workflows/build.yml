@@ -1,0 +1,85 @@
+name: Build macOS app
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-macos:
+    name: Build and test (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-latest
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Check frontend types
+        run: npm run typecheck
+
+      - name: Run Rust tests
+        run: cargo test --manifest-path src-tauri/Cargo.toml --lib
+
+      - name: Build app and DMG
+        run: npm run build
+
+      - name: Upload macOS installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: ai-usage-macos-${{ matrix.arch }}
+          path: src-tauri/target/release/bundle/dmg/*.dmg
+          if-no-files-found: error
+          retention-days: 14
+
+  publish-release:
+    name: Publish GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build-macos
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download macOS installers
+        uses: actions/download-artifact@v8
+        with:
+          pattern: ai-usage-macos-*
+          path: release-assets
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: release-assets/**/*.dmg
+          generate_release_notes: true
