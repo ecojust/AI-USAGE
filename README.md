@@ -57,7 +57,7 @@ npm run build
 
 安装包输出到 `src-tauri/target/release/bundle/`。本地构建产物未签名或公证，首次打开时 macOS 可能提示确认。
 
-GitHub Actions 会在 `master` 分支推送、Pull Request 和手动触发时构建 Apple Silicon 与 Intel 版本，并将 DMG 作为 workflow artifact 保存 14 天。推送 `v*` 版本标签时，两种架构的构建都通过后会自动创建 GitHub Release 并附上安装包。
+GitHub Actions 会在 `master` 分支推送、Pull Request 和手动触发时构建 Apple Silicon 与 Intel 版本，并将 DMG 作为 workflow artifact 保存 14 天。推送到 `master` 且两种架构的构建都通过后，会自动创建 GitHub Release 并附上安装包。
 
 ## 隐私与数据
 

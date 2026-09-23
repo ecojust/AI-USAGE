@@ -23,10 +23,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - runner: macos-latest
+          - runner: macos-15
             arch: arm64
+            rust_target: aarch64-apple-darwin
           - runner: macos-15-intel
             arch: x64
+            rust_target: x86_64-apple-darwin
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     steps:
@@ -42,6 +44,9 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Install Rust target
+        run: rustup target add ${{ matrix.rust_target }}
+
       - name: Install frontend dependencies
         run: npm ci
 
@@ -52,13 +57,13 @@ jobs:
         run: cargo test --manifest-path src-tauri/Cargo.toml --lib
 
       - name: Build app and DMG
-        run: npm run build
+        run: npm run build -- --target ${{ matrix.rust_target }}
 
       - name: Upload macOS installer
         uses: actions/upload-artifact@v7
         with:
           name: ai-usage-macos-${{ matrix.arch }}
-          path: src-tauri/target/release/bundle/dmg/*.dmg
+          path: src-tauri/target/${{ matrix.rust_target }}/release/bundle/dmg/*.dmg
           if-no-files-found: error
           retention-days: 14
 
