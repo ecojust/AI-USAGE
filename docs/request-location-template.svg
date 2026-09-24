@@ -15,12 +15,12 @@
   <text x="271" y="201" fill="#343a36" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Window</text>
   <text x="350" y="201" fill="#343a36" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Help</text>
   <text x="642" y="201" fill="#222925" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="20" font-weight="650">中国 上海</text>
-  <g transform="translate(792 166)" fill="#222">
+  <g transform="translate(792 181)" fill="#222">
     <rect x="0" y="0" width="28" height="7" rx="3.5"/><rect x="31" y="0" width="28" height="7" rx="3.5"/><rect x="62" y="0" width="28" height="7" rx="3.5"/><rect x="93" y="0" width="28" height="7" rx="3.5"/><rect x="124" y="0" width="28" height="7" rx="3.5" opacity=".22"/>
     <rect x="0" y="15" width="19" height="7" rx="3.5"/><rect x="22" y="15" width="19" height="7" rx="3.5"/><rect x="44" y="15" width="19" height="7" rx="3.5"/><rect x="66" y="15" width="19" height="7" rx="3.5"/><rect x="88" y="15" width="19" height="7" rx="3.5"/><rect x="110" y="15" width="19" height="7" rx="3.5" opacity=".22"/><rect x="132" y="15" width="19" height="7" rx="3.5" opacity=".22"/>
   </g>
-  <text x="962" y="181" fill="#222925" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">73%</text>
-  <text x="962" y="204" fill="#222925" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">81%</text>
+  <text x="962" y="190" fill="#222925" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">73%</text>
+  <text x="962" y="206" fill="#222925" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">81%</text>
   <text x="1062" y="201" fill="#424944" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Wi-Fi</text>
   <text x="1146" y="201" fill="#424944" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">9:41</text>
   <text x="58" y="315" fill="#7d8680" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">国家和地区替换套餐名；额度进度与余量保持显示。</text>
