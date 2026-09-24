@@ -18,7 +18,8 @@ type TrayTemplate =
   | "rings"
   | "capsule"
   | "meter"
-  | "dial";
+  | "dial"
+  | "location";
 const TRAY_TEMPLATE_STORAGE_KEY = "ai-usage-tray-template";
 function storedTemplate(): TrayTemplate {
   try {
@@ -30,7 +31,8 @@ function storedTemplate(): TrayTemplate {
       stored === "rings" ||
       stored === "capsule" ||
       stored === "meter" ||
-      stored === "dial"
+      stored === "dial" ||
+      stored === "location"
       ? stored
       : "concentrated";
   } catch {
@@ -39,6 +41,7 @@ function storedTemplate(): TrayTemplate {
 }
 
 const accountQuota = ref<AccountQuotaSnapshot | null>(null);
+const requestLocation = ref("定位中");
 const error = ref<string | null>(null);
 const clock = ref(Date.now());
 const selectedTemplate = ref<TrayTemplate>(storedTemplate());
@@ -47,6 +50,7 @@ let fetching = false;
 let disposed = false;
 let refreshTimer: ReturnType<typeof setInterval> | undefined;
 let clockTimer: ReturnType<typeof setInterval> | undefined;
+let locationTimer: ReturnType<typeof setInterval> | undefined;
 let resizeObserver: ResizeObserver | undefined;
 
 async function refresh() {
@@ -61,6 +65,26 @@ async function refresh() {
     if (!disposed) error.value = String(cause);
   } finally {
     fetching = false;
+  }
+}
+
+async function refreshRequestLocation() {
+  try {
+    const response = await fetch("https://ipwho.is/?lang=zh-CN");
+    if (!response.ok) throw new Error("location lookup failed");
+    const result = (await response.json()) as {
+      success?: boolean;
+      city?: string;
+      region?: string;
+      country?: string;
+    };
+    if (!result.success) throw new Error("location lookup failed");
+    requestLocation.value = [result.city, result.region, result.country]
+      .filter((part): part is string => Boolean(part?.trim()))
+      .filter((part, index, parts) => parts.indexOf(part) === index)
+      .join(" ") || "未知地点";
+  } catch {
+    requestLocation.value = "地点不可用";
   }
 }
 
@@ -97,7 +121,7 @@ const trayDisplay = computed(() => {
   };
 
   return {
-    plan: planLabel.value,
+    plan: selectedTemplate.value === "location" ? requestLocation.value : planLabel.value,
     fiveHour: formatPercent(
       fiveHourWindow ? getRemainingPercent(fiveHourWindow) : null,
     ),
@@ -140,7 +164,9 @@ async function fitWindowToContent() {
 
 onMounted(() => {
   void refresh();
+  void refreshRequestLocation();
   refreshTimer = setInterval(() => void refresh(), 30 * 1000);
+  locationTimer = setInterval(() => void refreshRequestLocation(), 10 * 60 * 1000);
   clockTimer = setInterval(() => {
     clock.value = Date.now();
   }, 15000);
@@ -154,6 +180,7 @@ onUnmounted(() => {
   disposed = true;
   clearInterval(refreshTimer);
   clearInterval(clockTimer);
+  clearInterval(locationTimer);
   resizeObserver?.disconnect();
 });
 </script>
@@ -179,6 +206,27 @@ onUnmounted(() => {
         <span class="option-copy"
           ><span class="option-title">集中显示</span
           ><span class="option-description">套餐名、周期条和剩余数值</span></span
+        >
+      </button>
+
+      <button
+        class="template-option"
+        :class="{ selected: selectedTemplate === 'location' }"
+        role="radio"
+        :aria-checked="selectedTemplate === 'location'"
+        @click="chooseTemplate('location')"
+      >
+        <div class="preview preview-location">
+          <span class="preview-plan">东京 日本</span>
+          <div class="preview-bars">
+            <i class="bars"><b v-for="n in 5" :key="n" :class="{ filled: n < 5 }" /></i>
+            <i class="bars"><b v-for="n in 7" :key="n" :class="{ filled: n < 6 }" /></i>
+          </div>
+          <div class="preview-values"><strong>73%</strong><strong>81%</strong></div>
+        </div>
+        <span class="option-copy"
+          ><span class="option-title">请求地点</span
+          ><span class="option-description">显示当前公网出口 IP 的估算地点</span></span
         >
       </button>
 

@@ -13,7 +13,8 @@ export type MenuBarQuotaDisplay = {
     | "rings"
     | "capsule"
     | "meter"
-    | "dial";
+    | "dial"
+    | "location";
   stale: boolean;
 };
 
@@ -27,7 +28,10 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
   const plan = display.plan;
   const hasPlan = !["quota", "labeled"].includes(display.template);
   context.font = `600 12px ${font}`;
-  const planWidth = plan && hasPlan ? Math.ceil(context.measureText(plan).width) + 7 : 0;
+  const measuredPlanWidth = plan && hasPlan ? Math.ceil(context.measureText(plan).width) : 0;
+  const planWidth = plan && hasPlan
+    ? Math.min(display.template === "location" ? 78 : Number.POSITIVE_INFINITY, measuredPlanWidth) + 7
+    : 0;
   const fiveHourValue = display.fiveHour;
   const sevenDayValue = display.sevenDay;
   const rows = [
@@ -89,7 +93,13 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
   context.fillStyle = foreground;
   context.textBaseline = "middle";
   context.font = `600 12px ${font}`;
-  if (hasPlan) context.fillText(plan, contentX, 9);
+  if (hasPlan) {
+    if (display.template === "location") {
+      context.fillText(plan, contentX, 9, planWidth - 7);
+    } else {
+      context.fillText(plan, contentX, 9);
+    }
+  }
 
   if (display.template === "text") {
     let x = contentX + planWidth;
