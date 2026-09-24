@@ -74,14 +74,18 @@ async function refreshRequestLocation() {
     if (!response.ok) throw new Error("location lookup failed");
     const result = (await response.json()) as {
       success?: boolean;
-      city?: string;
       region?: string;
       country?: string;
     };
     if (!result.success) throw new Error("location lookup failed");
-    requestLocation.value = [result.city, result.region, result.country]
-      .filter((part): part is string => Boolean(part?.trim()))
-      .filter((part, index, parts) => parts.indexOf(part) === index)
+    const country = result.country?.trim() ?? "";
+    let region = result.region?.trim() ?? "";
+    if (country === "中国") region = region.replace(/市$/, "");
+    if (country === "美国" && region && !/(州|特区)$/.test(region)) {
+      region += "州";
+    }
+    requestLocation.value = [country, region]
+      .filter((part, index, parts) => part && parts.indexOf(part) === index)
       .join(" ") || "未知地点";
   } catch {
     requestLocation.value = "地点不可用";
