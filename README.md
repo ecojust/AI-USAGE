@@ -14,17 +14,16 @@ AI Usage 是一款轻量的 Tauri 桌面应用。它从本机已登录的 Codex 
 - **自动刷新**：额度每 30 秒读取一次；倒计时按更短间隔更新。读取失败时保留上次成功的数据。
 - **尊重官方窗口周期**：周期长度与重置时间以账号服务返回的数据为准。
 
-| 模板预览 | 模板名称 |
+| 模板名称 | 模板预览 |
 | --- | --- |
-| <img src="docs/templates/concentrated.png" alt="集中显示模板预览" width="640" height="154"> | 集中显示 |
-| <img src="docs/templates/quota-bars.png" alt="纯额度条模板预览" width="640" height="154"> | 纯额度条 |
-| <img src="docs/templates/stacked-values.png" alt="套餐名加双行数值模板预览" width="640" height="154"> | 套餐名＋双行数值 |
-| <img src="docs/templates/labeled-bars.png" alt="周期标签分段条模板预览" width="640" height="154"> | 周期标签＋分段条 |
-| <img src="docs/templates/meter.png" alt="刻度电量尺模板预览" width="640" height="154"> | 刻度电量尺 |
+| 集中显示 | <img src="docs/templates/concentrated.png" alt="集中显示模板预览" width="640" height="154"> |
+| 纯额度条 | <img src="docs/templates/quota-bars.png" alt="纯额度条模板预览" width="640" height="154"> |
+| 套餐名＋双行数值 | <img src="docs/templates/stacked-values.png" alt="套餐名加双行数值模板预览" width="640" height="154"> |
+| 周期标签＋分段条 | <img src="docs/templates/labeled-bars.png" alt="周期标签分段条模板预览" width="640" height="154"> |
+| 刻度电量尺 | <img src="docs/templates/meter.svg" alt="刻度电量尺模板预览" width="640" height="154"> |
+| 请求地点 | <img src="docs/request-location-template.svg" alt="请求地点模板预览" width="640" height="167"> |
 
 *示例额度用于展示样式；为方便查看，状态栏区域按比例放大。*
-
-![请求地点模板的菜单栏效果：在额度条前显示国家和地区](docs/request-location-template.svg)
 
 *请求地点模板用当前公网出口 IP 估算国家和地区，并替代套餐名显示。*
 
