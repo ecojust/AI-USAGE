@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="340" viewBox="0 0 1300 340" role="img" aria-labelledby="title desc">
+  <title id="title">请求地点模板的菜单栏预览</title>
+  <desc id="desc">菜单栏样式示例：国家和地区中国上海显示在两组 Codex 额度进度条之前。</desc>
+  <rect width="1300" height="340" rx="22" fill="#f3f5f4"/>
+  <text x="58" y="52" fill="#78817c" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13" font-weight="700" letter-spacing="2">AI USAGE · MENU BAR PREVIEW</text>
+  <text x="58" y="88" fill="#222925" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="25" font-weight="700">请求地点</text>
+  <text x="1242" y="82" text-anchor="end" fill="#77817b" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">示例：Plus · 5 小时 73% · 本周 81%</text>
+  <rect x="58" y="116" width="1184" height="158" rx="18" fill="#fff" stroke="#dce2de"/>
+  <rect x="78" y="144" width="1144" height="104" rx="13" fill="#f6f7f6" stroke="#e4e8e5"/>
+  <circle cx="102" cy="196" r="7" fill="#292e2b"/>
+  <text x="127" y="201" fill="#343a36" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">File</text>
+  <text x="170" y="201" fill="#343a36" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Edit</text>
+  <text x="214" y="201" fill="#343a36" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">View</text>
+  <text x="271" y="201" fill="#343a36" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Window</text>
+  <text x="350" y="201" fill="#343a36" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Help</text>
+  <text x="642" y="201" fill="#222925" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="20" font-weight="650">中国 上海</text>
+  <g transform="translate(792 166)" fill="#222">
+    <rect x="0" y="0" width="28" height="7" rx="3.5"/><rect x="31" y="0" width="28" height="7" rx="3.5"/><rect x="62" y="0" width="28" height="7" rx="3.5"/><rect x="93" y="0" width="28" height="7" rx="3.5"/><rect x="124" y="0" width="28" height="7" rx="3.5" opacity=".22"/>
+    <rect x="0" y="15" width="19" height="7" rx="3.5"/><rect x="22" y="15" width="19" height="7" rx="3.5"/><rect x="44" y="15" width="19" height="7" rx="3.5"/><rect x="66" y="15" width="19" height="7" rx="3.5"/><rect x="88" y="15" width="19" height="7" rx="3.5"/><rect x="110" y="15" width="19" height="7" rx="3.5" opacity=".22"/><rect x="132" y="15" width="19" height="7" rx="3.5" opacity=".22"/>
+  </g>
+  <text x="962" y="181" fill="#222925" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">73%</text>
+  <text x="962" y="204" fill="#222925" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">81%</text>
+  <text x="1062" y="201" fill="#424944" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Wi-Fi</text>
+  <text x="1146" y="201" fill="#424944" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">9:41</text>
+  <text x="58" y="315" fill="#7d8680" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">国家和地区替换套餐名；额度进度与余量保持显示。</text>
+</svg>
