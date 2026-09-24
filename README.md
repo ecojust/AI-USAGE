@@ -20,8 +20,8 @@ AI Usage 是一款轻量的 Tauri 桌面应用。它从本机已登录的 Codex 
 | 纯额度条 | <img src="docs/templates/quota-bars.png" alt="纯额度条模板预览" width="640" height="154"> |
 | 套餐名＋双行数值 | <img src="docs/templates/stacked-values.png" alt="套餐名加双行数值模板预览" width="640" height="154"> |
 | 周期标签＋分段条 | <img src="docs/templates/labeled-bars.png" alt="周期标签分段条模板预览" width="640" height="154"> |
-| 刻度电量尺 | <img src="docs/templates/meter.svg" alt="刻度电量尺模板预览" width="640" height="154"> |
-| 请求地点 | <img src="docs/request-location-template.svg" alt="请求地点模板预览" width="640" height="167"> |
+| 刻度电量尺 | <img src="docs/templates/meter.png" alt="刻度电量尺模板预览" width="640" height="154"> |
+| 请求地点 | <img src="docs/templates/location.png" alt="请求地点模板预览" width="640" height="154"> |
 
 *示例额度用于展示样式；为方便查看，状态栏区域按比例放大。*
 
