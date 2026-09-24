@@ -28,9 +28,16 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
   const plan = display.plan;
   const hasPlan = !["quota", "labeled"].includes(display.template);
   context.font = `600 12px ${font}`;
-  const measuredPlanWidth = plan && hasPlan ? Math.ceil(context.measureText(plan).width) : 0;
-  const planWidth = plan && hasPlan
-    ? Math.min(display.template === "location" ? 78 : Number.POSITIVE_INFINITY, measuredPlanWidth) + 7
+  let displayedPlan = plan;
+  if (display.template === "location") {
+    const maxPlanWidth = 78;
+    while (displayedPlan && context.measureText(displayedPlan).width > maxPlanWidth) {
+      const characters = Array.from(displayedPlan);
+      displayedPlan = `${characters.slice(0, -2).join("")}…`;
+    }
+  }
+  const planWidth = displayedPlan && hasPlan
+    ? Math.ceil(context.measureText(displayedPlan).width) + 7
     : 0;
   const fiveHourValue = display.fiveHour;
   const sevenDayValue = display.sevenDay;
@@ -94,11 +101,7 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
   context.textBaseline = "middle";
   context.font = `600 12px ${font}`;
   if (hasPlan) {
-    if (display.template === "location") {
-      context.fillText(plan, contentX, 9, planWidth - 7);
-    } else {
-      context.fillText(plan, contentX, 9);
-    }
+    context.fillText(displayedPlan, contentX, 9);
   }
 
   if (display.template === "text") {
