@@ -44,6 +44,7 @@ const accountQuota = ref<AccountQuotaSnapshot | null>(null);
 const requestLocation = ref("定位中");
 const error = ref<string | null>(null);
 const clock = ref(Date.now());
+const refreshPulse = ref<number | null>(null);
 const selectedTemplate = ref<TrayTemplate>(storedTemplate());
 const settingsShell = ref<HTMLElement | null>(null);
 let fetching = false;
@@ -51,11 +52,30 @@ let disposed = false;
 let refreshTimer: ReturnType<typeof setInterval> | undefined;
 let clockTimer: ReturnType<typeof setInterval> | undefined;
 let locationTimer: ReturnType<typeof setInterval> | undefined;
+let refreshAnimationTimer: ReturnType<typeof setTimeout> | undefined;
 let resizeObserver: ResizeObserver | undefined;
+
+function animateRefresh() {
+  if (refreshAnimationTimer) clearTimeout(refreshAnimationTimer);
+  const startedAt = performance.now();
+  const duration = 900;
+  const update = () => {
+    const progress = Math.min(1, (performance.now() - startedAt) / duration);
+    refreshPulse.value = progress;
+    if (progress < 1) {
+      refreshAnimationTimer = setTimeout(update, 70);
+    } else {
+      refreshPulse.value = null;
+      refreshAnimationTimer = undefined;
+    }
+  };
+  update();
+}
 
 async function refresh() {
   if (fetching || disposed) return;
   fetching = true;
+  animateRefresh();
   try {
     const result = await invoke<AccountQuotaSnapshot>("get_usage");
     if (disposed) return;
@@ -143,6 +163,7 @@ const trayDisplay = computed(() => {
       sevenDayWindow?.resetsAt != null &&
         sevenDayWindow.resetsAt * 1000 - clock.value < 24 * 60 * 60 * 1000,
     ),
+    refreshPulse: refreshPulse.value,
     template: selectedTemplate.value,
     stale: Boolean(error.value),
   };
@@ -194,6 +215,7 @@ onUnmounted(() => {
   clearInterval(refreshTimer);
   clearInterval(clockTimer);
   clearInterval(locationTimer);
+  if (refreshAnimationTimer) clearTimeout(refreshAnimationTimer);
   resizeObserver?.disconnect();
 });
 </script>

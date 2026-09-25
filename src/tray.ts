@@ -5,6 +5,7 @@ export type MenuBarQuotaDisplay = {
   sevenDay: string;
   sevenDayTimeUntilReset: number | null;
   sevenDayIsFinalDay: boolean;
+  refreshPulse: number | null;
   template:
     | "concentrated"
     | "text"
@@ -84,6 +85,10 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
   canvas.width = width * scale;
   canvas.height = height * scale;
   context.scale(scale, scale);
+  if (display.refreshPulse != null) {
+    const pulse = Math.sin(Math.PI * display.refreshPulse) ** 2;
+    context.globalAlpha = 1 - pulse * 0.3;
+  }
 
   // Template images use black pixels and alpha only; macOS applies a
   // contrasting foreground for the current menu bar appearance.
@@ -280,7 +285,7 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
     }
   }
   return {
-    title: `${display.plan ? `${display.plan} · ` : ""}5小时用量剩余 ${display.fiveHour}，重置倒计时 ${display.fiveHourTimeUntilReset == null ? "未知" : `${display.fiveHourTimeUntilReset.toFixed(0)}%`} · 本周剩余 ${display.sevenDay}，重置倒计时 ${display.sevenDayTimeUntilReset == null ? "未知" : `${display.sevenDayTimeUntilReset.toFixed(0)}%`}（7天额度周期）${display.stale ? "（刷新失败）" : ""}`,
+    title: `${display.plan ? `${display.plan} · ` : ""}5小时用量剩余 ${display.fiveHour}，5h × ${display.fiveHourTimeUntilReset == null ? "未知" : `${display.fiveHourTimeUntilReset.toFixed(0)}%`} · 本周剩余 ${display.sevenDay}，7d × ${display.sevenDayTimeUntilReset == null ? "未知" : `${display.sevenDayTimeUntilReset.toFixed(0)}%`}（7天额度周期）${display.stale ? "（刷新失败）" : ""}`,
     rgba: Array.from(context.getImageData(0, 0, canvas.width, canvas.height).data),
     width: canvas.width,
     height: canvas.height,
