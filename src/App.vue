@@ -55,10 +55,10 @@ let locationTimer: ReturnType<typeof setInterval> | undefined;
 let refreshAnimationTimer: ReturnType<typeof setTimeout> | undefined;
 let resizeObserver: ResizeObserver | undefined;
 
-function animateRefresh() {
+function pulseTrayUpdate() {
   if (refreshAnimationTimer) clearTimeout(refreshAnimationTimer);
   const startedAt = performance.now();
-  const duration = 900;
+  const duration = 3000;
   const update = () => {
     const progress = Math.min(1, (performance.now() - startedAt) / duration);
     refreshPulse.value = progress;
@@ -75,7 +75,6 @@ function animateRefresh() {
 async function refresh() {
   if (fetching || disposed) return;
   fetching = true;
-  animateRefresh();
   try {
     const result = await invoke<AccountQuotaSnapshot>("get_usage");
     if (disposed) return;
@@ -174,6 +173,16 @@ watch(
     void invoke("set_tray_display", renderMenuBarQuota(value)).catch(() => undefined);
   },
   { immediate: true },
+);
+watch(
+  () => [
+    accountQuota.value,
+    requestLocation.value,
+    error.value,
+    clock.value,
+    selectedTemplate.value,
+  ],
+  pulseTrayUpdate,
 );
 
 function chooseTemplate(template: TrayTemplate) {
