@@ -139,6 +139,10 @@ const trayDisplay = computed(() => {
       sevenDayWindow ? getRemainingPercent(sevenDayWindow) : null,
     ),
     sevenDayTimeUntilReset: getResetProgress(sevenDayWindow),
+    sevenDayIsFinalDay: Boolean(
+      sevenDayWindow?.resetsAt != null &&
+        sevenDayWindow.resetsAt * 1000 - clock.value < 24 * 60 * 60 * 1000,
+    ),
     template: selectedTemplate.value,
     stale: Boolean(error.value),
   };

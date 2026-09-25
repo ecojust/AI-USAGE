@@ -4,6 +4,7 @@ export type MenuBarQuotaDisplay = {
   fiveHourTimeUntilReset: number | null;
   sevenDay: string;
   sevenDayTimeUntilReset: number | null;
+  sevenDayIsFinalDay: boolean;
   template:
     | "concentrated"
     | "text"
@@ -184,9 +185,20 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
     const rulerWidth = 35;
     for (const [rowIndex, row] of rows.entries()) {
       const [, segmentCount, timeUntilReset, y] = row;
+      const progress = timeUntilReset == null ? 0 : timeUntilReset / 100;
+      if (rowIndex === 1 && display.sevenDayIsFinalDay) {
+        context.fillStyle = "rgba(0, 0, 0, 0.24)";
+        context.fillRect(rulerX, y - 2, rulerWidth, 4);
+        if (progress > 0) {
+          context.fillStyle = foreground;
+          context.fillRect(rulerX, y - 2, rulerWidth * progress, 4);
+        }
+        drawValue(row[0], contentRight - 1, y, "right");
+        continue;
+      }
       const gap = 1.1;
       const tickWidth = (rulerWidth - (segmentCount - 1) * gap) / segmentCount;
-      const filledTicks = timeUntilReset == null ? 0 : timeUntilReset / 100 * segmentCount;
+      const filledTicks = progress * segmentCount;
       for (let tick = 0; tick < segmentCount; tick += 1) {
         const tickX = rulerX + tick * (tickWidth + gap);
         const fraction = Math.max(0, Math.min(1, filledTicks - tick));
@@ -226,27 +238,42 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
     const segmentBarX = display.template === "quota" ? contentX + 1 : labeled ? contentX + periodLabelWidth : contentX + barX;
     for (const [rowIndex, row] of rows.entries()) {
       const [value, segmentCount, timeUntilReset, y] = row;
+      const finalDay = rowIndex === 1 && display.sevenDayIsFinalDay;
       if (labeled) {
         context.font = `500 8px ${font}`;
         context.textAlign = "left";
         context.fillStyle = foreground;
         context.fillText(rowIndex === 0 ? "5h" : "7d", contentX, y);
       }
-      const filledSegments = timeUntilReset == null ? 0 : timeUntilReset / 100 * segmentCount;
       const segmentWidth = (barWidth - (segmentCount - 1) * barGap) / segmentCount;
       const barY = y - 1.6;
-      for (let index = 0; index < segmentCount; index += 1) {
-        const segmentX = segmentBarX + index * (segmentWidth + barGap);
+      const progress = timeUntilReset == null ? 0 : timeUntilReset / 100;
+      if (finalDay) {
         context.fillStyle = "rgba(0, 0, 0, 0.22)";
         context.beginPath();
-        context.roundRect(segmentX, barY, segmentWidth, 3.2, 1.6);
+        context.roundRect(segmentBarX, barY, barWidth, 3.2, 1.6);
         context.fill();
-        const fraction = Math.max(0, Math.min(1, filledSegments - index));
-        if (fraction > 0) {
+        if (progress > 0) {
           context.fillStyle = foreground;
           context.beginPath();
-          context.roundRect(segmentX, barY, segmentWidth * fraction, 3.2, 1.6);
+          context.roundRect(segmentBarX, barY, barWidth * progress, 3.2, 1.6);
           context.fill();
+        }
+      } else {
+        const filledSegments = progress * segmentCount;
+        for (let index = 0; index < segmentCount; index += 1) {
+          const segmentX = segmentBarX + index * (segmentWidth + barGap);
+          context.fillStyle = "rgba(0, 0, 0, 0.22)";
+          context.beginPath();
+          context.roundRect(segmentX, barY, segmentWidth, 3.2, 1.6);
+          context.fill();
+          const fraction = Math.max(0, Math.min(1, filledSegments - index));
+          if (fraction > 0) {
+            context.fillStyle = foreground;
+            context.beginPath();
+            context.roundRect(segmentX, barY, segmentWidth * fraction, 3.2, 1.6);
+            context.fill();
+          }
         }
       }
       drawValue(value, contentRight - 1, y, "right");
