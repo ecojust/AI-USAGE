@@ -31,6 +31,7 @@ fn set_tray_display(
     rgba: Vec<u8>,
     width: u32,
     height: u32,
+    is_template: bool,
 ) -> Result<(), String> {
     if width == 0
         || width > 2048
@@ -43,7 +44,8 @@ fn set_tray_display(
     if let Some(tray) = app.tray_by_id("usage") {
         tray.set_icon(Some(tauri::image::Image::new_owned(rgba, width, height)))
             .map_err(|e| e.to_string())?;
-        tray.set_icon_as_template(true).map_err(|e| e.to_string())?;
+        tray.set_icon_as_template(is_template)
+            .map_err(|e| e.to_string())?;
         tray.set_tooltip(Some(&title)).map_err(|e| e.to_string())?;
         tray.set_title(Some("")).map_err(|e| e.to_string())?;
     }

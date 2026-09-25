@@ -111,14 +111,14 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
   canvas.width = width * scale;
   canvas.height = height * scale;
   context.scale(scale, scale);
-  if (display.refreshPulse != null) {
-    const pulse = Math.sin(Math.PI * display.refreshPulse) ** 2;
-    context.globalAlpha = 1 - pulse * 0.3;
+  const pulsing = display.refreshPulse != null;
+  if (pulsing) {
+    context.globalAlpha = Math.floor((display.refreshPulse ?? 0) * 6) % 2 === 0 ? 1 : 0.2;
   }
 
-  // Template images use black pixels and alpha only; macOS applies a
-  // contrasting foreground for the current menu bar appearance.
-  const foreground = "black";
+  // Normal template images adapt to the menu bar appearance. Disable template
+  // rendering during the cyan refresh blink so the color remains visible.
+  const foreground = pulsing ? "#00d9e8" : "black";
   const contentX = horizontalPadding;
   const contentRight = width - horizontalPadding;
   const drawValue = (value: string, x: number, y: number, align: CanvasTextAlign = "left") => {
@@ -154,7 +154,7 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
       const [value, , , y] = row;
       context.font = `500 8px ${font}`;
       context.textAlign = "left";
-      context.fillStyle = "#aab2ac";
+      context.fillStyle = pulsing ? foreground : "#aab2ac";
       context.fillText(rowIndex === 0 ? "5h" : "7d", contentX + planWidth, y);
       drawValue(value, contentRight - 1, y, "right");
     }
@@ -325,5 +325,6 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
     rgba: Array.from(context.getImageData(0, 0, canvas.width, canvas.height).data),
     width: canvas.width,
     height: canvas.height,
+    isTemplate: !pulsing,
   };
 }
