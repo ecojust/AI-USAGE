@@ -121,7 +121,12 @@ const trayDisplay = computed(() => {
 
     const windowDurationMs = window.windowDurationMins * 60 * 1000;
     const remainingTimeMs = window.resetsAt * 1000 - clock.value;
-    return Math.max(0, Math.min(100, (remainingTimeMs / windowDurationMs) * 100));
+    const oneDayMs = 24 * 60 * 60 * 1000;
+    const progressDurationMs =
+      window.windowDurationMins === 10080 && remainingTimeMs < oneDayMs
+        ? oneDayMs
+        : windowDurationMs;
+    return Math.max(0, Math.min(100, (remainingTimeMs / progressDurationMs) * 100));
   };
 
   return {
