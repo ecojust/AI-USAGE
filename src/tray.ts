@@ -112,9 +112,6 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
   canvas.height = height * scale;
   context.scale(scale, scale);
   const pulsing = display.refreshPulse != null;
-  if (pulsing) {
-    context.globalAlpha = Math.floor((display.refreshPulse ?? 0) * 6) % 2 === 0 ? 1 : 0.2;
-  }
 
   // Normal template images adapt to the menu bar appearance. Disable template
   // rendering during the cyan refresh blink so the color remains visible.

@@ -57,19 +57,11 @@ let resizeObserver: ResizeObserver | undefined;
 
 function pulseTrayUpdate() {
   if (refreshAnimationTimer) clearTimeout(refreshAnimationTimer);
-  const startedAt = performance.now();
-  const duration = 3000;
-  const update = () => {
-    const progress = Math.min(1, (performance.now() - startedAt) / duration);
-    refreshPulse.value = progress;
-    if (progress < 1) {
-      refreshAnimationTimer = setTimeout(update, 70);
-    } else {
-      refreshPulse.value = null;
-      refreshAnimationTimer = undefined;
-    }
-  };
-  update();
+  refreshPulse.value = 0;
+  refreshAnimationTimer = setTimeout(() => {
+    refreshPulse.value = null;
+    refreshAnimationTimer = undefined;
+  }, 220);
 }
 
 async function refresh() {
