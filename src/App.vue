@@ -61,7 +61,7 @@ function pulseTrayUpdate() {
   refreshAnimationTimer = setTimeout(() => {
     refreshPulse.value = null;
     refreshAnimationTimer = undefined;
-  }, 220);
+  }, 1000);
 }
 
 async function refresh() {
@@ -171,7 +171,6 @@ watch(
     accountQuota.value,
     requestLocation.value,
     error.value,
-    clock.value,
     selectedTemplate.value,
   ],
   pulseTrayUpdate,
@@ -204,6 +203,7 @@ onMounted(() => {
   locationTimer = setInterval(() => void refreshRequestLocation(), 10 * 60 * 1000);
   clockTimer = setInterval(() => {
     clock.value = Date.now();
+    pulseTrayUpdate();
   }, 15000);
   if (settingsShell.value) {
     resizeObserver = new ResizeObserver(() => void fitWindowToContent());
