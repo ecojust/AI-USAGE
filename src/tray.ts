@@ -40,9 +40,10 @@ function formatResetCountdown(
   periodMinutes: number,
 ) {
   if (progress == null) return `${period}剩余时间未知`;
-  const percentage = Number(progress.toFixed(1));
-  const remainingMinutes = Math.round(periodMinutes * percentage / 100);
-  return `${period} × ${percentage}% = ${formatDuration(remainingMinutes)}`;
+  const remainingMinutes = Math.round(
+    periodMinutes * Math.max(0, Math.min(100, progress)) / 100,
+  );
+  return `${period}重置倒计时 ${formatDuration(remainingMinutes)}`;
 }
 
 // macOS tray images are displayed at 18 pt high. Render at 3× for crisp small
