@@ -20,6 +20,31 @@ export type MenuBarQuotaDisplay = {
   stale: boolean;
 };
 
+function formatDuration(minutes: number) {
+  const days = Math.floor(minutes / 1440);
+  const hours = Math.floor((minutes % 1440) / 60);
+  const remainingMinutes = minutes % 60;
+  const parts = [
+    days > 0 ? `${days}天` : "",
+    hours > 0 ? `${hours}小时` : "",
+    remainingMinutes > 0 || (days === 0 && hours === 0)
+      ? `${remainingMinutes}分`
+      : "",
+  ];
+  return parts.join("");
+}
+
+function formatResetCountdown(
+  period: string,
+  progress: number | null,
+  periodMinutes: number,
+) {
+  if (progress == null) return `${period}剩余时间未知`;
+  const percentage = Number(progress.toFixed(1));
+  const remainingMinutes = Math.round(periodMinutes * percentage / 100);
+  return `${period} × ${percentage}% = ${formatDuration(remainingMinutes)}`;
+}
+
 // macOS tray images are displayed at 18 pt high. Render at 3× for crisp small
 // text on Retina screens.
 export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
@@ -284,8 +309,18 @@ export function renderMenuBarQuota(display: MenuBarQuotaDisplay) {
       drawValue(value, contentRight - 1, y, "right");
     }
   }
+  const fiveHourReset = formatResetCountdown(
+    "5h",
+    display.fiveHourTimeUntilReset,
+    5 * 60,
+  );
+  const sevenDayReset = formatResetCountdown(
+    display.sevenDayIsFinalDay ? "7d最后24h" : "7d",
+    display.sevenDayTimeUntilReset,
+    display.sevenDayIsFinalDay ? 24 * 60 : 7 * 24 * 60,
+  );
   return {
-    title: `${display.plan ? `${display.plan} · ` : ""}5小时用量剩余 ${display.fiveHour}，5h × ${display.fiveHourTimeUntilReset == null ? "未知" : `${display.fiveHourTimeUntilReset.toFixed(0)}%`} · 本周剩余 ${display.sevenDay}，7d × ${display.sevenDayTimeUntilReset == null ? "未知" : `${display.sevenDayTimeUntilReset.toFixed(0)}%`}（7天额度周期）${display.stale ? "（刷新失败）" : ""}`,
+    title: `${display.plan ? `${display.plan} · ` : ""}5小时额度剩余 ${display.fiveHour}，${fiveHourReset} · 本周额度剩余 ${display.sevenDay}，${sevenDayReset}${display.stale ? "（刷新失败）" : ""}`,
     rgba: Array.from(context.getImageData(0, 0, canvas.width, canvas.height).data),
     width: canvas.width,
     height: canvas.height,
