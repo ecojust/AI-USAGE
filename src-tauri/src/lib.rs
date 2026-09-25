@@ -1,10 +1,25 @@
 mod quota;
 
+use std::{
+    sync::Mutex,
+    thread,
+    time::{Duration, Instant},
+};
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{TrayIconBuilder, TrayIconEvent},
     Manager,
 };
+
+#[derive(Clone)]
+struct TrayIconFrame {
+    rgba: Vec<u8>,
+    width: u32,
+    height: u32,
+}
+
+#[derive(Default)]
+struct TrayImageState(Mutex<Option<TrayIconFrame>>);
 
 #[tauri::command]
 async fn get_usage() -> Result<quota::AccountQuotaSnapshot, String> {
@@ -42,6 +57,15 @@ fn set_tray_display(
         return Err("菜单栏图像尺寸无效".into());
     }
     if let Some(tray) = app.tray_by_id("usage") {
+        if is_template {
+            if let Ok(mut frame) = app.state::<TrayImageState>().0.lock() {
+                *frame = Some(TrayIconFrame {
+                    rgba: rgba.clone(),
+                    width,
+                    height,
+                });
+            }
+        }
         tray.set_icon(Some(tauri::image::Image::new_owned(rgba, width, height)))
             .map_err(|e| e.to_string())?;
         tray.set_icon_as_template(is_template)
@@ -50,6 +74,57 @@ fn set_tray_display(
         tray.set_title(Some("")).map_err(|e| e.to_string())?;
     }
     Ok(())
+}
+
+fn start_periodic_tray_pulse(app: tauri::AppHandle) {
+    let interval = Duration::from_secs(15);
+    let mut next_pulse = Instant::now() + interval;
+    thread::spawn(move || loop {
+        thread::sleep(next_pulse.saturating_duration_since(Instant::now()));
+        next_pulse += interval;
+
+        let frame = {
+            let state = app.state::<TrayImageState>();
+            state.0.lock().ok().and_then(|frame| frame.clone())
+        };
+        let Some(frame) = frame else { continue };
+        let Some(tray) = app.tray_by_id("usage") else {
+            continue;
+        };
+
+        let mut cyan = frame.rgba.clone();
+        for pixel in cyan.chunks_exact_mut(4) {
+            if pixel[3] > 0 {
+                pixel[0] = 0;
+                pixel[1] = 217;
+                pixel[2] = 232;
+            }
+        }
+        if tray
+            .set_icon(Some(tauri::image::Image::new_owned(
+                cyan,
+                frame.width,
+                frame.height,
+            )))
+            .is_ok()
+        {
+            let _ = tray.set_icon_as_template(false);
+            thread::sleep(Duration::from_secs(1));
+
+            let latest_frame = {
+                let state = app.state::<TrayImageState>();
+                state.0.lock().ok().and_then(|frame| frame.clone())
+            };
+            if let Some(latest_frame) = latest_frame {
+                let _ = tray.set_icon(Some(tauri::image::Image::new_owned(
+                    latest_frame.rgba,
+                    latest_frame.width,
+                    latest_frame.height,
+                )));
+                let _ = tray.set_icon_as_template(true);
+            }
+        }
+    });
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -71,6 +146,8 @@ pub fn run() {
             _ => {}
         })
         .setup(|app| {
+            app.manage(TrayImageState::default());
+
             #[cfg(target_os = "macos")]
             {
                 app.set_activation_policy(tauri::ActivationPolicy::Accessory);
@@ -122,6 +199,7 @@ pub fn run() {
                 })
                 .build(app)?;
             let _ = tray.set_title(Some("5小时 — 本周 —"));
+            start_periodic_tray_pulse(app.handle().clone());
             Ok(())
         })
         .run(tauri::generate_context!())

@@ -203,7 +203,6 @@ onMounted(() => {
   locationTimer = setInterval(() => void refreshRequestLocation(), 10 * 60 * 1000);
   clockTimer = setInterval(() => {
     clock.value = Date.now();
-    pulseTrayUpdate();
   }, 15000);
   if (settingsShell.value) {
     resizeObserver = new ResizeObserver(() => void fitWindowToContent());
