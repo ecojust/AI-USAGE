@@ -5,3 +5,4 @@
 .preview-dial{gap:7px}.preview-dial svg{width:34px;height:24px;overflow:visible}.dial-track{fill:none;stroke:#a9d8b0;stroke-width:1.7;stroke-linecap:round;stroke-dasharray:26 18;transform:rotate(136deg);transform-origin:center}.dial-secondary{stroke:#769c7b;stroke-dasharray:20 24}.dial-value{margin-left:auto;color:#c9e5ce;font-size:10px}
 
 .preview-location .preview-plan{max-width:104px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-version{margin-top:9px;padding-right:2px;color:#727a73;font-size:9px;font-variant-numeric:tabular-nums;text-align:right;letter-spacing:.25px}

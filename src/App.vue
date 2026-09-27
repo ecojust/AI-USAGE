@@ -21,6 +21,7 @@ type TrayTemplate =
   | "dial"
   | "location";
 const TRAY_TEMPLATE_STORAGE_KEY = "ai-usage-tray-template";
+const APP_VERSION = "26.0927.01";
 function storedTemplate(): TrayTemplate {
   try {
     const stored = localStorage.getItem(TRAY_TEMPLATE_STORAGE_KEY);
@@ -50,8 +51,6 @@ const settingsShell = ref<HTMLElement | null>(null);
 let fetching = false;
 let disposed = false;
 let refreshTimer: ReturnType<typeof setInterval> | undefined;
-let clockTimer: ReturnType<typeof setInterval> | undefined;
-let locationTimer: ReturnType<typeof setInterval> | undefined;
 let refreshAnimationTimer: ReturnType<typeof setTimeout> | undefined;
 let resizeObserver: ResizeObserver | undefined;
 
@@ -80,8 +79,12 @@ async function refresh() {
 }
 
 async function refreshRequestLocation() {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetch("https://ipwho.is/?lang=zh-CN");
+    const response = await fetch("https://ipwho.is/?lang=zh-CN", {
+      signal: controller.signal,
+    });
     if (!response.ok) throw new Error("location lookup failed");
     const result = (await response.json()) as {
       success?: boolean;
@@ -100,6 +103,8 @@ async function refreshRequestLocation() {
       .join(" ") || "未知地点";
   } catch {
     requestLocation.value = "地点不可用";
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
@@ -197,13 +202,13 @@ async function fitWindowToContent() {
 }
 
 onMounted(() => {
-  void refresh();
-  void refreshRequestLocation();
-  refreshTimer = setInterval(() => void refresh(), 30 * 1000);
-  locationTimer = setInterval(() => void refreshRequestLocation(), 10 * 60 * 1000);
-  clockTimer = setInterval(() => {
+  const refreshAll = () => {
+    void refresh();
+    void refreshRequestLocation();
     clock.value = Date.now();
-  }, 15000);
+  };
+  refreshAll();
+  refreshTimer = setInterval(refreshAll, 30 * 1000);
   if (settingsShell.value) {
     resizeObserver = new ResizeObserver(() => void fitWindowToContent());
     resizeObserver.observe(settingsShell.value);
@@ -213,8 +218,6 @@ onMounted(() => {
 onUnmounted(() => {
   disposed = true;
   clearInterval(refreshTimer);
-  clearInterval(clockTimer);
-  clearInterval(locationTimer);
   if (refreshAnimationTimer) clearTimeout(refreshAnimationTimer);
   resizeObserver?.disconnect();
 });
@@ -421,5 +424,6 @@ onUnmounted(() => {
         >
       </button> -->
     </section>
+    <footer class="app-version">{{ APP_VERSION }}</footer>
   </main>
 </template>

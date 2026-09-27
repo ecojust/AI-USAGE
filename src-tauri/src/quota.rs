@@ -94,6 +94,10 @@ fn locate_codex_executable() -> PathBuf {
         .map(PathBuf::from)
         .unwrap_or_default();
     let mut paths = vec![
+        home.join("Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"),
+        home.join("Applications/Codex.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"),
+        PathBuf::from("/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"),
+        PathBuf::from("/Applications/Codex.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"),
         home.join("Applications/ChatGPT.app/Contents/Resources/codex"),
         home.join("Applications/Codex.app/Contents/Resources/codex"),
         PathBuf::from("/Applications/ChatGPT.app/Contents/Resources/codex"),
