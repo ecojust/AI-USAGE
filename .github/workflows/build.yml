@@ -56,8 +56,29 @@ jobs:
       - name: Run Rust tests
         run: cargo test --manifest-path src-tauri/Cargo.toml --lib
 
-      - name: Build app and DMG
-        run: npm run build -- --target ${{ matrix.rust_target }}
+      - name: Build macOS app
+        run: npm run build -- --bundles app --target ${{ matrix.rust_target }}
+
+      - name: Create DMG without Finder automation
+        shell: bash
+        run: |
+          set -euo pipefail
+          app_path="src-tauri/target/${{ matrix.rust_target }}/release/bundle/macos/AI Usage.app"
+          dmg_dir="src-tauri/target/${{ matrix.rust_target }}/release/bundle/dmg"
+          staging_dir="$(mktemp -d)"
+          dmg_path="$dmg_dir/AI Usage_0.1.0_${{ matrix.arch }}.dmg"
+          trap 'rm -rf "$staging_dir"' EXIT
+
+          mkdir -p "$dmg_dir"
+          ditto "$app_path" "$staging_dir/AI Usage.app"
+          ln -s /Applications "$staging_dir/Applications"
+          hdiutil create \
+            -volname "AI Usage" \
+            -srcfolder "$staging_dir" \
+            -ov \
+            -format UDZO \
+            "$dmg_path"
+          hdiutil verify "$dmg_path"
 
       - name: Upload macOS installer
         uses: actions/upload-artifact@v7
